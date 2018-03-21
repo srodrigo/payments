@@ -11,11 +11,10 @@ func NewPaymentsRepository() *PaymentsRepository {
 }
 
 func (repository *PaymentsRepository) Save(payment *Payment) *Payment {
-	newPayment := &Payment{
-		Id: "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43",
-	}
+	newPayment := Payment(*payment)
+	newPayment.Id = "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"
 
-	repository.payments = append(repository.payments, newPayment)
+	repository.payments = append(repository.payments, &newPayment)
 
-	return newPayment
+	return &newPayment
 }
