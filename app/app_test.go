@@ -23,7 +23,7 @@ func TestCreatesPayment(t *testing.T) {
 	paymentsRepository := payments.PaymentsRepository{}
 	app := CreateApp(&paymentsRepository)
 
-	response := app.createPayment()
+	response := app.createPayment("create-payment-1_request.json")
 
 	assert.Equal(t, http.StatusCreated, response.Code)
 
@@ -43,7 +43,7 @@ func TestCreatesPayment(t *testing.T) {
 func TestGetsPayment(t *testing.T) {
 	paymentsRepository := payments.PaymentsRepository{}
 	app := CreateApp(&paymentsRepository)
-	app.createPayment()
+	app.createPayment("create-payment-1_request.json")
 
 	response := app.getPayment()
 
@@ -62,8 +62,8 @@ func TestGetsPayment(t *testing.T) {
 	assert.Equal(t, expected, responseBody)
 }
 
-func (app *App) createPayment() *httptest.ResponseRecorder {
-	payload, err := readTestFile("create-payment-1_request.json")
+func (app *App) createPayment(filename string) *httptest.ResponseRecorder {
+	payload, err := readTestFile(filename)
 	if err != nil {
 		fmt.Println("Error loading data")
 		fmt.Println(err)
