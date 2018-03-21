@@ -42,7 +42,7 @@ func (app *App) createPayment() *httptest.ResponseRecorder {
 
 	req, _ := http.NewRequest("POST", "/payments", bytes.NewBuffer(payload))
 	response := httptest.NewRecorder()
-	app.Router.ServeHTTP(response, req)
+	app.Router.Router.ServeHTTP(response, req)
 
 	return response
 }
