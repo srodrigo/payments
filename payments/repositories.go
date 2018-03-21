@@ -18,3 +18,14 @@ func (repository *PaymentsRepository) Save(payment *Payment) *Payment {
 
 	return &newPayment
 }
+
+func (repository *PaymentsRepository) FindById(id string) *Payment {
+	for i, _ := range repository.payments {
+		payment := repository.payments[i]
+		if payment.Id == id {
+			return payment
+		}
+	}
+
+	return &Payment{}
+}

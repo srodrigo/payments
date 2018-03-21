@@ -24,10 +24,26 @@ func NewRouter(paymentsRepository *payments.PaymentsRepository) *Router {
 	paymentsService := payments.NewPaymentsService(paymentsRepository)
 
 	muxRouter := mux.NewRouter()
+	muxRouter.HandleFunc("/payments/{id}", GetPaymentHandler(paymentsService)).Methods("GET")
 	muxRouter.HandleFunc("/payments", CreatePaymentHandler(paymentsService)).Methods("POST")
 
 	return &Router{
 		Router: muxRouter,
+	}
+}
+
+func GetPaymentHandler(paymentsService *payments.PaymentsService) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
+		newPayment := paymentsService.GetPaymentById(vars["id"])
+
+		// TODO: Handle error
+		payload, _ := createPaymentPayload(newPayment)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(payload)
 	}
 }
 
