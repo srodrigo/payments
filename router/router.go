@@ -12,6 +12,14 @@ type Router struct {
 	Router *mux.Router
 }
 
+type PaymentPayload struct {
+	Id             string            `json:"id"`
+	Type           string            `json:"type"`
+	Version        int               `json:"version"`
+	OrganisationId string            `json:"organisation_id"`
+	Payment        *payments.Payment `json:"attributes"`
+}
+
 func NewRouter(paymentsRepository *payments.PaymentsRepository) *Router {
 	paymentsService := payments.NewPaymentsService(paymentsRepository)
 
@@ -45,11 +53,11 @@ func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 }
 
 func createPaymentPayload(payment *payments.Payment) ([]byte, error) {
-	return json.Marshal(Payload{
+	return json.Marshal(PaymentPayload{
 		Id:             payment.Id,
 		Type:           "Payment",
 		Version:        0,
 		OrganisationId: "743d5b63-8e6f-432e-a8fa-c5d8d2ee5fcb",
-		Attributes:     payment,
+		Payment:        payment,
 	})
 }
