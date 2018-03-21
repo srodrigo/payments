@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/srodrigo/payments/payments"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
@@ -12,13 +13,15 @@ import (
 )
 
 func TestCreateApp(t *testing.T) {
-	app := CreateApp()
+	paymentsRepository := payments.PaymentsRepository{}
+	app := CreateApp(&paymentsRepository)
 
 	assert.NotNil(t, app.Router)
 }
 
 func TestCreatesPayment(t *testing.T) {
-	app := CreateApp()
+	paymentsRepository := payments.PaymentsRepository{}
+	app := CreateApp(&paymentsRepository)
 
 	response := app.createPayment()
 
