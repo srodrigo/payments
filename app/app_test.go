@@ -30,7 +30,7 @@ func TestCreatesPayment(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(response.Body.Bytes(), &responseBody)
 
-	expectedJson, err := readTestFile("create-payment-1_response.json")
+	expectedJson, err := readTestFile("payment-1_response.json")
 	if err != nil {
 		fmt.Println("Error loading data")
 		fmt.Println(err)
@@ -41,7 +41,7 @@ func TestCreatesPayment(t *testing.T) {
 }
 
 func (app *App) createPayment() *httptest.ResponseRecorder {
-	payload, err := readTestFile("create-payment-1.json")
+	payload, err := readTestFile("create-payment-1_request.json")
 	if err != nil {
 		fmt.Println("Error loading data")
 		fmt.Println(err)
