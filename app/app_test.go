@@ -30,7 +30,14 @@ func TestCreatesPayment(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(response.Body.Bytes(), &responseBody)
 
-	assert.Equal(t, responseBody["id"], "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
+	expectedJson, err := readTestFile("create-payment-1_response.json")
+	if err != nil {
+		fmt.Println("Error loading data")
+		fmt.Println(err)
+	}
+	var expected map[string]interface{}
+	json.Unmarshal(expectedJson, &expected)
+	assert.Equal(t, responseBody["id"], expected["id"])
 }
 
 func (app *App) createPayment() *httptest.ResponseRecorder {
