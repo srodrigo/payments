@@ -129,7 +129,7 @@
                     "bank_id_code": "GBDSC"
                 }
             }
-        },
+        }
     ],
     "links": {
         "self": "https://api.test.tech/v1/payments"
