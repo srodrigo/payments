@@ -1,13 +1,14 @@
 package app
 
-import "github.com/gorilla/mux"
+import (
+	"github.com/gorilla/mux"
+	"github.com/srodrigo/payments/router"
+)
 
 type App struct {
 	Router *mux.Router
 }
 
 func CreateApp() App {
-	router := mux.NewRouter()
-
-	return App{Router: router}
+	return App{Router: router.NewRouter()}
 }
