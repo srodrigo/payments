@@ -13,8 +13,11 @@ type Router struct {
 }
 
 type PaymentPayload struct {
-	Id      string            `json:"id"`
-	Payment *payments.Payment `json:"attributes"`
+	Id             string            `json:"id"`
+	Type           string            `json:"type"`
+	Version        int               `json:"version"`
+	OrganisationId string            `json:"organisation_id"`
+	Payment        *payments.Payment `json:"attributes"`
 }
 
 func NewRouter(paymentsRepository *payments.PaymentsRepository) *Router {
@@ -51,7 +54,10 @@ func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 
 func createPaymentPayload(payment *payments.Payment) ([]byte, error) {
 	return json.Marshal(PaymentPayload{
-		Id:      payment.Id,
-		Payment: payment,
+		Id:             payment.Id,
+		Type:           "Payment",
+		Version:        0,
+		OrganisationId: "743d5b63-8e6f-432e-a8fa-c5d8d2ee5fcb",
+		Payment:        payment,
 	})
 }

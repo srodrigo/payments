@@ -37,7 +37,10 @@ func TestCreatesPayment(t *testing.T) {
 	}
 	var expected map[string]interface{}
 	json.Unmarshal(expectedJson, &expected)
+	assert.Equal(t, responseBody["type"], expected["type"])
 	assert.Equal(t, responseBody["id"], expected["id"])
+	assert.Equal(t, responseBody["version"], expected["version"])
+	assert.Equal(t, responseBody["organisation_id"], expected["organisation_id"])
 }
 
 func (app *App) createPayment() *httptest.ResponseRecorder {
