@@ -8,8 +8,4 @@ RUN go get github.com/stretchr/testify/assert \
 WORKDIR /go/src/github.com/srodrigo/payments
 ADD . /go/src/github.com/srodrigo/payments
 
-RUN go build
-
-EXPOSE 8000
-
 CMD go test -v ./...
