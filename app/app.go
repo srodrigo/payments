@@ -7,5 +7,7 @@ type App struct {
 }
 
 func CreateApp() App {
-	return App{}
+	router := mux.NewRouter()
+
+	return App{Router: router}
 }
