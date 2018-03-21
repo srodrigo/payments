@@ -25,19 +25,8 @@ func TestCreatesPayment(t *testing.T) {
 
 	response := app.createPayment("create-payment-1_request.json")
 
-	assert.Equal(t, http.StatusCreated, response.Code)
-
-	var responseBody map[string]interface{}
-	json.Unmarshal(response.Body.Bytes(), &responseBody)
-
-	expectedJson, err := readTestFile("payment-1_response.json")
-	if err != nil {
-		fmt.Println("Error loading data")
-		fmt.Println(err)
-	}
-	var expected map[string]interface{}
-	json.Unmarshal(expectedJson, &expected)
-	assert.Equal(t, expected, responseBody)
+	assertResponseCode(t, http.StatusCreated, response.Code)
+	assertResponseBody(t, "payment-1_response.json", response.Body)
 }
 
 func TestGetsPayment(t *testing.T) {
@@ -47,19 +36,8 @@ func TestGetsPayment(t *testing.T) {
 
 	response := app.getPayment()
 
-	assert.Equal(t, http.StatusOK, response.Code)
-
-	var responseBody map[string]interface{}
-	json.Unmarshal(response.Body.Bytes(), &responseBody)
-
-	expectedJson, err := readTestFile("payment-1_response.json")
-	if err != nil {
-		fmt.Println("Error loading data")
-		fmt.Println(err)
-	}
-	var expected map[string]interface{}
-	json.Unmarshal(expectedJson, &expected)
-	assert.Equal(t, expected, responseBody)
+	assertResponseCode(t, http.StatusOK, response.Code)
+	assertResponseBody(t, "payment-1_response.json", response.Body)
 }
 
 func TestGetAllPayments(t *testing.T) {
@@ -70,19 +48,8 @@ func TestGetAllPayments(t *testing.T) {
 
 	response := app.getAllPayments()
 
-	assert.Equal(t, http.StatusOK, response.Code)
-
-	var responseBody map[string]interface{}
-	json.Unmarshal(response.Body.Bytes(), &responseBody)
-
-	expectedJson, err := readTestFile("all-payments_response.json")
-	if err != nil {
-		fmt.Println("Error loading data")
-		fmt.Println(err)
-	}
-	var expected map[string]interface{}
-	json.Unmarshal(expectedJson, &expected)
-	assert.Equal(t, expected, responseBody)
+	assertResponseCode(t, http.StatusOK, response.Code)
+	assertResponseBody(t, "all-payments_response.json", response.Body)
 }
 
 func (app *App) createPayment(filename string) *httptest.ResponseRecorder {
@@ -113,6 +80,24 @@ func (app *App) getAllPayments() *httptest.ResponseRecorder {
 	app.Router.Router.ServeHTTP(response, req)
 
 	return response
+}
+
+func assertResponseCode(t *testing.T, expected, actual int) {
+	assert.Equal(t, expected, actual)
+}
+
+func assertResponseBody(t *testing.T, filename string, body *bytes.Buffer) {
+	var responseBody map[string]interface{}
+	json.Unmarshal(body.Bytes(), &responseBody)
+
+	expectedJson, err := readTestFile(filename)
+	if err != nil {
+		fmt.Println("Error loading data")
+		fmt.Println(err)
+	}
+	var expected map[string]interface{}
+	json.Unmarshal(expectedJson, &expected)
+	assert.Equal(t, expected, responseBody)
 }
 
 func readTestFile(filename string) ([]byte, error) {
