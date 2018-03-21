@@ -12,6 +12,11 @@ type Router struct {
 	Router *mux.Router
 }
 
+type PaymentPayload struct {
+	Id      string            `json:"id"`
+	Payment *payments.Payment `json:"attributes"`
+}
+
 func NewRouter(paymentsRepository *payments.PaymentsRepository) *Router {
 	paymentsService := payments.NewPaymentsService(paymentsRepository)
 
@@ -36,10 +41,17 @@ func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 		newPayment := paymentsService.CreatePayment(&payment)
 
 		// TODO: Handle error
-		payload, _ := json.Marshal(newPayment)
+		payload, _ := createPaymentPayload(newPayment)
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 		w.Write(payload)
 	}
+}
+
+func createPaymentPayload(payment *payments.Payment) ([]byte, error) {
+	return json.Marshal(PaymentPayload{
+		Id:      payment.Id,
+		Payment: payment,
+	})
 }
