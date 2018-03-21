@@ -132,6 +132,6 @@
         },
     ],
     "links": {
-        "self": "https://api.test.form3.tech/v1/payments"
+        "self": "https://api.test.tech/v1/payments"
     }
 }

@@ -34,7 +34,7 @@ func TestGetsPayment(t *testing.T) {
 	app := CreateApp(&paymentsRepository)
 	app.createPayment("create-payment-1_request.json")
 
-	response := app.makeGetRequest("/payments/4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
+	response := app.getPayment("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
 
 	assertResponseCode(t, http.StatusOK, response.Code)
 	assertResponseBody(t, "payment-1_response.json", response.Body)
@@ -46,7 +46,7 @@ func TestGetAllPayments(t *testing.T) {
 	app.createPayment("create-payment-1_request.json")
 	app.createPayment("create-payment-2_request.json")
 
-	response := app.makeGetRequest("/payments")
+	response := app.getAllPayments()
 
 	assertResponseCode(t, http.StatusOK, response.Code)
 	assertResponseBody(t, "all-payments_response.json", response.Body)
@@ -62,8 +62,8 @@ func (app *App) createPayment(filename string) *httptest.ResponseRecorder {
 	return app.makePostRequest("/payments", payload)
 }
 
-func (app *App) getPayment() *httptest.ResponseRecorder {
-	return app.makeGetRequest("/payments/4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
+func (app *App) getPayment(id string) *httptest.ResponseRecorder {
+	return app.makeGetRequest(fmt.Sprintf("/payments/%s", id))
 }
 
 func (app *App) getAllPayments() *httptest.ResponseRecorder {
