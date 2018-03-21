@@ -40,6 +40,28 @@ func TestCreatesPayment(t *testing.T) {
 	assert.Equal(t, expected, responseBody)
 }
 
+func TestGetsPayment(t *testing.T) {
+	paymentsRepository := payments.PaymentsRepository{}
+	app := CreateApp(&paymentsRepository)
+	app.createPayment()
+
+	response := app.getPayment()
+
+	assert.Equal(t, http.StatusOK, response.Code)
+
+	var responseBody map[string]interface{}
+	json.Unmarshal(response.Body.Bytes(), &responseBody)
+
+	expectedJson, err := readTestFile("payment-1_response.json")
+	if err != nil {
+		fmt.Println("Error loading data")
+		fmt.Println(err)
+	}
+	var expected map[string]interface{}
+	json.Unmarshal(expectedJson, &expected)
+	assert.Equal(t, expected, responseBody)
+}
+
 func (app *App) createPayment() *httptest.ResponseRecorder {
 	payload, err := readTestFile("create-payment-1_request.json")
 	if err != nil {
@@ -48,6 +70,14 @@ func (app *App) createPayment() *httptest.ResponseRecorder {
 	}
 
 	req, _ := http.NewRequest("POST", "/payments", bytes.NewBuffer(payload))
+	response := httptest.NewRecorder()
+	app.Router.Router.ServeHTTP(response, req)
+
+	return response
+}
+
+func (app *App) getPayment() *httptest.ResponseRecorder {
+	req, _ := http.NewRequest("GET", "/payments/4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43", nil)
 	response := httptest.NewRecorder()
 	app.Router.Router.ServeHTTP(response, req)
 
