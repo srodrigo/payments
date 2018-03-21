@@ -1,12 +1,13 @@
 package payments
 
-type Payments struct {
+type PaymentsService struct {
 	PaymentsRepository *PaymentsRepository
 }
 
-func NewPayments(paymentsRepository *PaymentsRepository) *Payments {
-	return &Payments{paymentsRepository}
+func NewPaymentsService(paymentsRepository *PaymentsRepository) *PaymentsService {
+	return &PaymentsService{paymentsRepository}
 }
 
-func (payments Payments) CreatePayment(payment Payment) {
+func (service *PaymentsService) CreatePayment(payment *Payment) *Payment {
+	return service.PaymentsRepository.Save(payment)
 }

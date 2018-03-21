@@ -1,27 +1,45 @@
 package router
 
 import (
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/srodrigo/payments/payments"
+	"io/ioutil"
 	"net/http"
 )
 
 type Router struct {
-	Router   *mux.Router
-	Payments *payments.Payments
+	Router *mux.Router
 }
 
 func NewRouter(paymentsRepository *payments.PaymentsRepository) *Router {
-	muxRouter := mux.NewRouter()
-	muxRouter.HandleFunc("/payments", CreatePayment).Methods("POST")
+	paymentsService := payments.NewPaymentsService(paymentsRepository)
 
-	payments := payments.NewPayments(paymentsRepository)
+	muxRouter := mux.NewRouter()
+	muxRouter.HandleFunc("/payments", CreatePaymentHandler(paymentsService)).Methods("POST")
 
 	return &Router{
-		Router:   muxRouter,
-		Payments: payments,
+		Router: muxRouter,
 	}
 }
 
-func CreatePayment(w http.ResponseWriter, r *http.Request) {
+func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// TODO: Handle error
+		b, _ := ioutil.ReadAll(r.Body)
+		defer r.Body.Close()
+
+		var payment payments.Payment
+		// TODO: Handle error
+		json.Unmarshal(b, &payment)
+
+		newPayment := paymentsService.CreatePayment(&payment)
+
+		// TODO: Handle error
+		payload, _ := json.Marshal(newPayment)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		w.Write(payload)
+	}
 }
