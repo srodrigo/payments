@@ -7,17 +7,19 @@ import (
 )
 
 type Router struct {
-	Router             *mux.Router
-	PaymentsRepository *payments.PaymentsRepository
+	Router   *mux.Router
+	Payments *payments.Payments
 }
 
 func NewRouter(paymentsRepository *payments.PaymentsRepository) *Router {
 	muxRouter := mux.NewRouter()
 	muxRouter.HandleFunc("/payments", CreatePayment).Methods("POST")
 
+	payments := payments.NewPayments(paymentsRepository)
+
 	return &Router{
-		Router:             muxRouter,
-		PaymentsRepository: paymentsRepository,
+		Router:   muxRouter,
+		Payments: payments,
 	}
 }
 
