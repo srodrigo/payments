@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/srodrigo/payments/payments"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -80,8 +81,13 @@ func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 		defer r.Body.Close()
 
 		var payment payments.Payment
-		// TODO: Handle error
-		json.Unmarshal(b, &payment)
+		err := json.Unmarshal(b, &payment)
+		if err != nil {
+			log.Println("Error parsing body")
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 
 		newPayment := paymentsService.CreatePayment(&payment)
 
