@@ -70,11 +70,22 @@ func TestGetAllPayments(t *testing.T) {
 	assertResponseBody(t, "all-payments_response.json", response.Body)
 }
 
-func TestBadRequestWhenBodyIsInvalid(t *testing.T) {
+func TestBadRequestWhenCreatePaymentBodyIsInvalid(t *testing.T) {
 	paymentsRepository := paymentsRepositoryWithIds("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
 	app := CreateApp(paymentsRepository)
 
 	response := app.createPayment("create-payment-malformed-body_request.json")
+
+	assertResponseCode(t, http.StatusBadRequest, response.Code)
+	assertEmptyResponseBody(t, response.Body)
+}
+
+func TestBadRequestWhenUpdatePaymentBodyIsInvalid(t *testing.T) {
+	id := "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"
+	paymentsRepository := paymentsRepositoryWithIds(id)
+	app := CreateApp(paymentsRepository)
+
+	response := app.updatePayment(id, "create-payment-malformed-body_request.json")
 
 	assertResponseCode(t, http.StatusBadRequest, response.Code)
 	assertEmptyResponseBody(t, response.Body)
