@@ -57,6 +57,16 @@ func TestGetAllPayments(t *testing.T) {
 	assertResponseBody(t, "all-payments_response.json", response.Body)
 }
 
+func TestBadRequestWhenBodyIsInvalid(t *testing.T) {
+	paymentsRepository := paymentsRepositoryWithIds("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
+	app := CreateApp(paymentsRepository)
+
+	response := app.createPayment("create-payment-malformed-body_request.json")
+
+	assertResponseCode(t, http.StatusBadRequest, response.Code)
+	assertEmptyResponseBody(t, response.Body)
+}
+
 func (app *App) createPayment(filename string) *httptest.ResponseRecorder {
 	payload, err := readTestFile(filename)
 	if err != nil {
@@ -97,6 +107,10 @@ func assertResponseBody(t *testing.T, filename string, body *bytes.Buffer) {
 	}
 
 	assert.Equal(t, expected, responseBody)
+}
+
+func assertEmptyResponseBody(t *testing.T, body *bytes.Buffer) {
+	assert.Equal(t, 0, len(body.Bytes()))
 }
 
 func readTestFile(filename string) ([]byte, error) {
