@@ -57,7 +57,7 @@ func GetAllPaymentsHandler(paymentsService *payments.PaymentsService) func(w htt
 		newPayment := paymentsService.GetAllPayments()
 
 		url := fmt.Sprintf("http://%s%s", r.Host, r.URL.Path)
-		payload, _ := createAllPaymentsPayload(newPayment, url)
+		payload, _ := marshallPaymentsListPayload(newPayment, url)
 
 		writeJsonResponse(w, http.StatusOK, payload)
 	}
@@ -75,7 +75,7 @@ func GetPaymentHandler(paymentsService *payments.PaymentsService) func(w http.Re
 		}
 
 		url := fmt.Sprintf("http://%s%s", r.Host, r.URL.Path)
-		payload, _ := createSinglePaymentPayload(newPayment, url)
+		payload, _ := marshalSinglePaymentPayload(newPayment, url)
 
 		writeJsonResponse(w, http.StatusOK, payload)
 	}
@@ -98,7 +98,7 @@ func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 		newPayment := paymentsService.CreatePayment(&payment)
 
 		url := fmt.Sprintf("http://%s%s/%s", r.Host, r.URL.Path, newPayment.Id)
-		payload, _ := createSinglePaymentPayload(newPayment, url)
+		payload, _ := marshalSinglePaymentPayload(newPayment, url)
 
 		writeJsonResponse(w, http.StatusCreated, payload)
 	}
@@ -127,7 +127,7 @@ func UpdatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 		}
 
 		url := fmt.Sprintf("http://%s%s", r.Host, r.URL.Path)
-		payload, _ := createSinglePaymentPayload(updatedPayment, url)
+		payload, _ := marshalSinglePaymentPayload(updatedPayment, url)
 
 		writeJsonResponse(w, http.StatusOK, payload)
 	}
@@ -153,14 +153,6 @@ func writeJsonResponse(w http.ResponseWriter, statusCode int, payload []byte) {
 	w.Write(payload)
 }
 
-func marshalPayment(payment *payments.Payment) ([]byte, error) {
-	return json.Marshal(createPaymentPayload(payment))
-}
-
-func marshalPaymentPayload(paymentPayload *PaymentPayload) ([]byte, error) {
-	return json.Marshal(*paymentPayload)
-}
-
 func createPaymentPayload(payment *payments.Payment) *PaymentPayload {
 	return &PaymentPayload{
 		Id:             payment.Id,
@@ -171,14 +163,18 @@ func createPaymentPayload(payment *payments.Payment) *PaymentPayload {
 	}
 }
 
-func createSinglePaymentPayload(payment *payments.Payment, url string) ([]byte, error) {
+func marshalPayment(payment *payments.Payment) ([]byte, error) {
+	return json.Marshal(createPaymentPayload(payment))
+}
+
+func marshalSinglePaymentPayload(payment *payments.Payment, url string) ([]byte, error) {
 	return json.Marshal(SinglePaymentPayload{
 		Data:  createPaymentPayload(payment),
 		Links: LinksPayload{Self: url},
 	})
 }
 
-func createAllPaymentsPayload(payments []*payments.Payment, url string) ([]byte, error) {
+func marshallPaymentsListPayload(payments []*payments.Payment, url string) ([]byte, error) {
 	paymentsPayload := make([]*PaymentPayload, len(payments))
 	for i := 0; i < len(payments); i++ {
 		payload := createPaymentPayload(payments[i])
