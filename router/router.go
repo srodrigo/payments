@@ -140,7 +140,12 @@ func DeletePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 		json.Unmarshal(b, &payment)
 
 		vars := mux.Vars(r)
-		paymentsService.DeletePayment(vars["id"])
+		err := paymentsService.DeletePayment(vars["id"])
+		if err != nil {
+			log.Println("Error updating payment:", err)
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
 
 		w.WriteHeader(http.StatusNoContent)
 	}

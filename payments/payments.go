@@ -16,8 +16,8 @@ func (service *PaymentsService) UpdatePayment(id string, payment *Payment) (*Pay
 	return service.PaymentsRepository.Update(id, payment)
 }
 
-func (service *PaymentsService) DeletePayment(id string) {
-	service.PaymentsRepository.Delete(id)
+func (service *PaymentsService) DeletePayment(id string) error {
+	return service.PaymentsRepository.Delete(id)
 }
 
 func (service *PaymentsService) GetPaymentById(id string) (*Payment, error) {
