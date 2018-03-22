@@ -114,6 +114,16 @@ func TestNotFoundWhenUpdatePaymentIdDoesNotExist(t *testing.T) {
 	assertEmptyResponseBody(t, response.Body)
 }
 
+func TestNotFoundWhenDeletePaymentIdDoesNotExist(t *testing.T) {
+	paymentsRepository := payments.NewPaymentsRepository()
+	app := CreateApp(paymentsRepository)
+
+	response := app.deletePayment("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
+
+	assertResponseCode(t, http.StatusNotFound, response.Code)
+	assertEmptyResponseBody(t, response.Body)
+}
+
 func TestNotFoundWhenPaymentDoesNotExist(t *testing.T) {
 	paymentsRepository := payments.NewPaymentsRepository()
 	app := CreateApp(paymentsRepository)
