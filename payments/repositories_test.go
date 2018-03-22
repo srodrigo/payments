@@ -27,3 +27,13 @@ func TestSavesPaymentWithRandomId(t *testing.T) {
 
 	assert.True(t, r.MatchString(savedPayment.Id))
 }
+
+func TestFindsPaymentsById(t *testing.T) {
+	paymentsRepository := NewPaymentsRepository()
+	payment := paymentsRepository.Save(&Payment{})
+
+	paymentById, err := paymentsRepository.FindById(payment.Id)
+
+	assert.Equal(t, payment, paymentById)
+	assert.Equal(t, nil, err)
+}
