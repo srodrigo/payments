@@ -7,6 +7,16 @@ import (
 	"testing"
 )
 
+func TestSavesPayments(t *testing.T) {
+	paymentsRepository := NewPaymentsRepository()
+
+	paymentsRepository.Save(&Payment{})
+	paymentsRepository.Save(&Payment{})
+
+	allPayments := paymentsRepository.FindAll()
+	assert.Equal(t, 2, len(allPayments))
+}
+
 func TestSavesPaymentWithRandomId(t *testing.T) {
 	paymentsRepository := NewPaymentsRepository()
 	hexadigit := "[0-9a-f]"
