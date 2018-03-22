@@ -48,10 +48,9 @@ func TestUpdatesPayment(t *testing.T) {
 	newPaymentRef := &newPayment
 	updatedPayment, err := paymentsRepository.Update(payment.Id, newPaymentRef)
 
-	assert.Equal(t, 1, len(paymentsRepository.FindAll()))
+	allPayments := paymentsRepository.FindAll()
+	assert.Equal(t, 1, len(allPayments))
 	assert.True(t, reflect.DeepEqual(*newPaymentRef, *updatedPayment))
+	assert.True(t, reflect.DeepEqual(*newPaymentRef, *allPayments[0]))
 	assert.Equal(t, nil, err)
-
-	paymentById, err := paymentsRepository.FindById(payment.Id)
-	assert.True(t, reflect.DeepEqual(*newPaymentRef, *paymentById))
 }
