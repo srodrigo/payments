@@ -38,7 +38,7 @@ func (repository *PaymentsRepository) Save(payment *Payment) *Payment {
 }
 
 func (repository *PaymentsRepository) Update(id string, payment *Payment) (*Payment, error) {
-	for i, _ := range repository.payments {
+	for i := 0; i < len(repository.payments); i++ {
 		current := repository.payments[i]
 		if current.Id == id {
 			updatedPayment := Payment(*payment)
@@ -52,7 +52,7 @@ func (repository *PaymentsRepository) Update(id string, payment *Payment) (*Paym
 }
 
 func (repository *PaymentsRepository) Delete(id string) error {
-	for i, _ := range repository.payments {
+	for i := 0; i < len(repository.payments); i++ {
 		current := repository.payments[i]
 		if current.Id == id {
 			repository.payments = append(repository.payments[:i], repository.payments[i+1:]...)
@@ -64,7 +64,7 @@ func (repository *PaymentsRepository) Delete(id string) error {
 }
 
 func (repository *PaymentsRepository) FindById(id string) (*Payment, error) {
-	for i, _ := range repository.payments {
+	for i := 0; i < len(repository.payments); i++ {
 		payment := repository.payments[i]
 		if payment.Id == id {
 			return payment, nil
