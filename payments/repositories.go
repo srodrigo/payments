@@ -1,5 +1,7 @@
 package payments
 
+import "github.com/satori/go.uuid"
+
 type UUID interface {
 	GetNextUUID() string
 }
@@ -11,8 +13,8 @@ type PaymentsRepository struct {
 	Uuid     UUID
 }
 
-func (uuid *RandomUUID) GetNextUUID() string {
-	return ""
+func (randomUuid *RandomUUID) GetNextUUID() string {
+	return uuid.Must(uuid.NewV4()).String()
 }
 
 func NewPaymentsRepository() *PaymentsRepository {
