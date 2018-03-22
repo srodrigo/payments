@@ -14,6 +14,14 @@ import (
 
 const BASE_URL = "/v1/payments"
 
+type TestUUID struct {
+	Ids []string
+}
+
+func (uuid TestUUID) GetNextUUID() string {
+	return "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"
+}
+
 func TestCreateApp(t *testing.T) {
 	paymentsRepository := payments.PaymentsRepository{}
 	app := CreateApp(&paymentsRepository)
@@ -22,7 +30,9 @@ func TestCreateApp(t *testing.T) {
 }
 
 func TestCreatesPayment(t *testing.T) {
-	paymentsRepository := payments.PaymentsRepository{}
+	paymentsRepository := payments.PaymentsRepository{
+		Uuid: TestUUID{},
+	}
 	app := CreateApp(&paymentsRepository)
 
 	response := app.createPayment("create-payment-1_request.json")
@@ -32,7 +42,9 @@ func TestCreatesPayment(t *testing.T) {
 }
 
 func TestGetsPayment(t *testing.T) {
-	paymentsRepository := payments.PaymentsRepository{}
+	paymentsRepository := payments.PaymentsRepository{
+		Uuid: TestUUID{},
+	}
 	app := CreateApp(&paymentsRepository)
 	app.createPayment("create-payment-1_request.json")
 
@@ -43,7 +55,9 @@ func TestGetsPayment(t *testing.T) {
 }
 
 func TestGetAllPayments(t *testing.T) {
-	paymentsRepository := payments.PaymentsRepository{}
+	paymentsRepository := payments.PaymentsRepository{
+		Uuid: TestUUID{},
+	}
 	app := CreateApp(&paymentsRepository)
 	app.createPayment("create-payment-1_request.json")
 	app.createPayment("create-payment-2_request.json")

@@ -1,18 +1,30 @@
 package payments
 
+type UUID interface {
+	GetNextUUID() string
+}
+
+type RandomUUID struct{}
+
 type PaymentsRepository struct {
 	payments []*Payment
+	Uuid     UUID
+}
+
+func (uuid RandomUUID) GetNextUUID() string {
+	return ""
 }
 
 func NewPaymentsRepository() *PaymentsRepository {
 	return &PaymentsRepository{
 		payments: make([]*Payment, 0),
+		Uuid:     RandomUUID{},
 	}
 }
 
 func (repository *PaymentsRepository) Save(payment *Payment) *Payment {
 	newPayment := Payment(*payment)
-	newPayment.Id = "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"
+	newPayment.Id = repository.Uuid.GetNextUUID()
 
 	repository.payments = append(repository.payments, &newPayment)
 

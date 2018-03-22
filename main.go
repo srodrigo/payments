@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	paymentsRepository := payments.PaymentsRepository{}
-	server := app.CreateApp(&paymentsRepository)
+	paymentsRepository := payments.NewPaymentsRepository()
+	server := app.CreateApp(paymentsRepository)
 	server.Run()
 }
