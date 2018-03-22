@@ -114,7 +114,7 @@ func UpdatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 		}
 
 		vars := mux.Vars(r)
-		newPayment, err := paymentsService.UpdatePayment(vars["id"], &payment)
+		updatedPayment, err := paymentsService.UpdatePayment(vars["id"], &payment)
 		if err != nil {
 			log.Println("Error updating payment:", err)
 			w.WriteHeader(http.StatusNotFound)
@@ -122,7 +122,7 @@ func UpdatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 		}
 
 		// TODO: Handle error
-		payload, _ := marshalPayment(newPayment)
+		payload, _ := marshalPayment(updatedPayment)
 
 		writeJsonResponse(w, http.StatusOK, payload)
 	}
