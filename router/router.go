@@ -52,7 +52,6 @@ func GetAllPaymentsHandler(paymentsService *payments.PaymentsService) func(w htt
 		newPayment := paymentsService.GetAllPayments()
 
 		url := fmt.Sprintf("http://%s%s", r.Host, r.URL.Path)
-		// TODO: Handle error
 		payload, _ := createAllPaymentsPayload(newPayment, url)
 
 		writeJsonResponse(w, http.StatusOK, payload)
@@ -70,7 +69,6 @@ func GetPaymentHandler(paymentsService *payments.PaymentsService) func(w http.Re
 			return
 		}
 
-		// TODO: Handle error
 		payload, _ := marshalPayment(newPayment)
 
 		writeJsonResponse(w, http.StatusOK, payload)
@@ -93,7 +91,6 @@ func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 
 		newPayment := paymentsService.CreatePayment(&payment)
 
-		// TODO: Handle error
 		payload, _ := marshalPayment(newPayment)
 
 		writeJsonResponse(w, http.StatusCreated, payload)
@@ -122,7 +119,6 @@ func UpdatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 			return
 		}
 
-		// TODO: Handle error
 		payload, _ := marshalPayment(updatedPayment)
 
 		writeJsonResponse(w, http.StatusOK, payload)
