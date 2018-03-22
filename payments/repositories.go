@@ -11,14 +11,14 @@ type PaymentsRepository struct {
 	Uuid     UUID
 }
 
-func (uuid RandomUUID) GetNextUUID() string {
+func (uuid *RandomUUID) GetNextUUID() string {
 	return ""
 }
 
 func NewPaymentsRepository() *PaymentsRepository {
 	return &PaymentsRepository{
 		payments: make([]*Payment, 0),
-		Uuid:     RandomUUID{},
+		Uuid:     &RandomUUID{},
 	}
 }
 

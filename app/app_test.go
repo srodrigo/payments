@@ -18,8 +18,10 @@ type TestUUID struct {
 	Ids []string
 }
 
-func (uuid TestUUID) GetNextUUID() string {
-	return "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"
+func (uuid *TestUUID) GetNextUUID() string {
+	nextUuid := uuid.Ids[0]
+	uuid.Ids = uuid.Ids[1:]
+	return nextUuid
 }
 
 func TestCreateApp(t *testing.T) {
@@ -31,7 +33,9 @@ func TestCreateApp(t *testing.T) {
 
 func TestCreatesPayment(t *testing.T) {
 	paymentsRepository := payments.PaymentsRepository{
-		Uuid: TestUUID{},
+		Uuid: &TestUUID{
+			Ids: []string{"4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"},
+		},
 	}
 	app := CreateApp(&paymentsRepository)
 
@@ -43,7 +47,9 @@ func TestCreatesPayment(t *testing.T) {
 
 func TestGetsPayment(t *testing.T) {
 	paymentsRepository := payments.PaymentsRepository{
-		Uuid: TestUUID{},
+		Uuid: &TestUUID{
+			Ids: []string{"4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"},
+		},
 	}
 	app := CreateApp(&paymentsRepository)
 	app.createPayment("create-payment-1_request.json")
@@ -56,7 +62,12 @@ func TestGetsPayment(t *testing.T) {
 
 func TestGetAllPayments(t *testing.T) {
 	paymentsRepository := payments.PaymentsRepository{
-		Uuid: TestUUID{},
+		Uuid: &TestUUID{
+			Ids: []string{
+				"4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43",
+				"216d4da9-e59a-4cc6-8df3-3da6e7580b77",
+			},
+		},
 	}
 	app := CreateApp(&paymentsRepository)
 	app.createPayment("create-payment-1_request.json")
