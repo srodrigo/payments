@@ -53,9 +53,7 @@ func GetAllPaymentsHandler(paymentsService *payments.PaymentsService) func(w htt
 		url := fmt.Sprintf("http://%s%s", r.Host, r.URL.Path)
 		payload, _ := createAllPaymentsPayload(newPayment, url)
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(payload)
+		writeJsonResponse(w, http.StatusOK, payload)
 	}
 }
 
@@ -73,9 +71,7 @@ func GetPaymentHandler(paymentsService *payments.PaymentsService) func(w http.Re
 		// TODO: Handle error
 		payload, _ := marshalPayment(newPayment)
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(payload)
+		writeJsonResponse(w, http.StatusOK, payload)
 	}
 }
 
@@ -99,10 +95,14 @@ func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 		// TODO: Handle error
 		payload, _ := marshalPayment(newPayment)
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
-		w.Write(payload)
+		writeJsonResponse(w, http.StatusCreated, payload)
 	}
+}
+
+func writeJsonResponse(w http.ResponseWriter, statusCode int, payload []byte) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	w.Write(payload)
 }
 
 func marshalPayment(payment *payments.Payment) ([]byte, error) {
