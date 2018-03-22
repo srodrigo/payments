@@ -29,3 +29,10 @@ func (repository *PaymentsRepository) FindById(id string) *Payment {
 
 	return &Payment{}
 }
+
+func (repository *PaymentsRepository) FindAll() []*Payment {
+	paymentsCopy := make([]*Payment, len(repository.payments))
+	copy(paymentsCopy, repository.payments)
+
+	return paymentsCopy
+}

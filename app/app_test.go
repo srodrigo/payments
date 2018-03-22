@@ -83,8 +83,14 @@ func assertResponseBody(t *testing.T, filename string, body *bytes.Buffer) {
 		fmt.Println("Error loading data")
 		fmt.Println(err)
 	}
+
 	var expected map[string]interface{}
-	json.Unmarshal(expectedJson, &expected)
+	err = json.Unmarshal(expectedJson, &expected)
+	if err != nil {
+		fmt.Println("Error parsing data")
+		fmt.Println(err)
+	}
+
 	assert.Equal(t, expected, responseBody)
 }
 

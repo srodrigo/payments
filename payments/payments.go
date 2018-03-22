@@ -15,3 +15,7 @@ func (service *PaymentsService) CreatePayment(payment *Payment) *Payment {
 func (service *PaymentsService) GetPaymentById(id string) *Payment {
 	return service.PaymentsRepository.FindById(id)
 }
+
+func (service *PaymentsService) GetAllPayments() []*Payment {
+	return service.PaymentsRepository.FindAll()
+}
