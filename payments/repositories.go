@@ -65,9 +65,9 @@ func (repository *PaymentsRepository) Delete(id string) error {
 
 func (repository *PaymentsRepository) FindById(id string) (*Payment, error) {
 	for i := 0; i < len(repository.payments); i++ {
-		payment := repository.payments[i]
-		if payment.Id == id {
-			return payment, nil
+		current := repository.payments[i]
+		if current.Id == id {
+			return current, nil
 		}
 	}
 
