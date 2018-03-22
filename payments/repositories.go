@@ -51,6 +51,16 @@ func (repository *PaymentsRepository) Update(id string, payment *Payment) (*Paym
 	return &Payment{}, errors.New(fmt.Sprintf("Could not update payment with id %s, payment does not exist", id))
 }
 
+func (repository *PaymentsRepository) Delete(id string) {
+	for i, _ := range repository.payments {
+		current := repository.payments[i]
+		if current.Id == id {
+			repository.payments = append(repository.payments[:i], repository.payments[i+1:]...)
+			return
+		}
+	}
+}
+
 func (repository *PaymentsRepository) FindById(id string) (*Payment, error) {
 	for i, _ := range repository.payments {
 		payment := repository.payments[i]

@@ -40,6 +40,7 @@ func NewRouter(paymentsRepository *payments.PaymentsRepository) *Router {
 	muxRouter.HandleFunc(BASE_URL+"/{id}", GetPaymentHandler(paymentsService)).Methods("GET")
 	muxRouter.HandleFunc(BASE_URL, CreatePaymentHandler(paymentsService)).Methods("POST")
 	muxRouter.HandleFunc(BASE_URL+"/{id}", UpdatePaymentHandler(paymentsService)).Methods("PUT")
+	muxRouter.HandleFunc(BASE_URL+"/{id}", DeletePaymentHandler(paymentsService)).Methods("DELETE")
 
 	return &Router{
 		Router: muxRouter,
@@ -125,6 +126,23 @@ func UpdatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 		payload, _ := marshalPayment(updatedPayment)
 
 		writeJsonResponse(w, http.StatusOK, payload)
+	}
+}
+
+func DeletePaymentHandler(paymentsService *payments.PaymentsService) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// TODO: Handle error
+		b, _ := ioutil.ReadAll(r.Body)
+		defer r.Body.Close()
+
+		var payment payments.Payment
+		// TODO: Handle error
+		json.Unmarshal(b, &payment)
+
+		vars := mux.Vars(r)
+		paymentsService.DeletePayment(vars["id"])
+
+		w.WriteHeader(http.StatusNoContent)
 	}
 }
 
