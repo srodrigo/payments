@@ -22,6 +22,11 @@ type PaymentPayload struct {
 	Payment        *payments.Payment `json:"attributes"`
 }
 
+type SinglePaymentPayload struct {
+	Data  *PaymentPayload `json:"data"`
+	Links LinksPayload    `json:"links"`
+}
+
 type PaymentsListPayload struct {
 	Data  []*PaymentPayload `json:"data"`
 	Links LinksPayload      `json:"links"`
@@ -69,7 +74,8 @@ func GetPaymentHandler(paymentsService *payments.PaymentsService) func(w http.Re
 			return
 		}
 
-		payload, _ := marshalPayment(newPayment)
+		url := fmt.Sprintf("http://%s%s", r.Host, r.URL.Path)
+		payload, _ := createSinglePaymentPayload(newPayment, url)
 
 		writeJsonResponse(w, http.StatusOK, payload)
 	}
@@ -91,7 +97,8 @@ func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 
 		newPayment := paymentsService.CreatePayment(&payment)
 
-		payload, _ := marshalPayment(newPayment)
+		url := fmt.Sprintf("http://%s%s/%s", r.Host, r.URL.Path, newPayment.Id)
+		payload, _ := createSinglePaymentPayload(newPayment, url)
 
 		writeJsonResponse(w, http.StatusCreated, payload)
 	}
@@ -119,7 +126,8 @@ func UpdatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 			return
 		}
 
-		payload, _ := marshalPayment(updatedPayment)
+		url := fmt.Sprintf("http://%s%s", r.Host, r.URL.Path)
+		payload, _ := createSinglePaymentPayload(updatedPayment, url)
 
 		writeJsonResponse(w, http.StatusOK, payload)
 	}
@@ -161,6 +169,13 @@ func createPaymentPayload(payment *payments.Payment) *PaymentPayload {
 		OrganisationId: "743d5b63-8e6f-432e-a8fa-c5d8d2ee5fcb",
 		Payment:        payment,
 	}
+}
+
+func createSinglePaymentPayload(payment *payments.Payment, url string) ([]byte, error) {
+	return json.Marshal(SinglePaymentPayload{
+		Data:  createPaymentPayload(payment),
+		Links: LinksPayload{Self: url},
+	})
 }
 
 func createAllPaymentsPayload(payments []*payments.Payment, url string) ([]byte, error) {
