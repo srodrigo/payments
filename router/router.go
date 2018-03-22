@@ -127,14 +127,6 @@ func UpdatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 
 func DeletePaymentHandler(paymentsService *payments.PaymentsService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO: Handle error
-		b, _ := ioutil.ReadAll(r.Body)
-		defer r.Body.Close()
-
-		var payment payments.Payment
-		// TODO: Handle error
-		json.Unmarshal(b, &payment)
-
 		vars := mux.Vars(r)
 		err := paymentsService.DeletePayment(vars["id"])
 		if err != nil {
