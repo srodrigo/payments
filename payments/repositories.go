@@ -48,7 +48,7 @@ func (repository *PaymentsRepository) Update(id string, payment *Payment) (*Paym
 		}
 	}
 
-	return &Payment{}, nil
+	return &Payment{}, errors.New(fmt.Sprintf("Could not update payment with id %s, payment does not exist", id))
 }
 
 func (repository *PaymentsRepository) FindById(id string) (*Payment, error) {
