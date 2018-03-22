@@ -63,7 +63,12 @@ func GetPaymentHandler(paymentsService *payments.PaymentsService) func(w http.Re
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
-		newPayment := paymentsService.GetPaymentById(vars["id"])
+		newPayment, err := paymentsService.GetPaymentById(vars["id"])
+		if err != nil {
+			log.Println("Error getting payment:", err)
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
 
 		// TODO: Handle error
 		payload, _ := marshalPayment(newPayment)

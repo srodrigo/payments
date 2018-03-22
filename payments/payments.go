@@ -12,7 +12,7 @@ func (service *PaymentsService) CreatePayment(payment *Payment) *Payment {
 	return service.PaymentsRepository.Save(payment)
 }
 
-func (service *PaymentsService) GetPaymentById(id string) *Payment {
+func (service *PaymentsService) GetPaymentById(id string) (*Payment, error) {
 	return service.PaymentsRepository.FindById(id)
 }
 

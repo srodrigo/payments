@@ -1,6 +1,10 @@
 package payments
 
-import "github.com/satori/go.uuid"
+import (
+	"errors"
+	"fmt"
+	"github.com/satori/go.uuid"
+)
 
 type UUID interface {
 	GetNextUUID() string
@@ -33,15 +37,15 @@ func (repository *PaymentsRepository) Save(payment *Payment) *Payment {
 	return &newPayment
 }
 
-func (repository *PaymentsRepository) FindById(id string) *Payment {
+func (repository *PaymentsRepository) FindById(id string) (*Payment, error) {
 	for i, _ := range repository.payments {
 		payment := repository.payments[i]
 		if payment.Id == id {
-			return payment
+			return payment, nil
 		}
 	}
 
-	return &Payment{}
+	return &Payment{}, errors.New(fmt.Sprintf("Could not find payment with id %s", id))
 }
 
 func (repository *PaymentsRepository) FindAll() []*Payment {
