@@ -91,6 +91,17 @@ func TestBadRequestWhenUpdatePaymentBodyIsInvalid(t *testing.T) {
 	assertEmptyResponseBody(t, response.Body)
 }
 
+func TestNotFoundWhenUpdatePaymentIdDoesNotExist(t *testing.T) {
+	id := "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"
+	paymentsRepository := paymentsRepositoryWithIds(id)
+	app := CreateApp(paymentsRepository)
+
+	response := app.updatePayment(id, "update-payment-1_request.json")
+
+	assertResponseCode(t, http.StatusNotFound, response.Code)
+	assertEmptyResponseBody(t, response.Body)
+}
+
 func TestNotFoundWhenPaymentDoesNotExist(t *testing.T) {
 	paymentsRepository := payments.NewPaymentsRepository()
 	app := CreateApp(paymentsRepository)
