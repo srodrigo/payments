@@ -31,6 +31,19 @@ func TestCreatesPayment(t *testing.T) {
 	assertResponseBody(t, "payment-1_response.json", response.Body)
 }
 
+func TestUpdatesPayment(t *testing.T) {
+	id := "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"
+	paymentsRepository := paymentsRepositoryWithIds(id)
+	app := CreateApp(paymentsRepository)
+	app.createPayment("create-payment-1_request.json")
+
+	// Updates the "amount" field
+	response := app.updatePayment(id, "update-payment-1_request.json")
+
+	assertResponseCode(t, http.StatusOK, response.Code)
+	assertResponseBody(t, "updated-payment-1_response.json", response.Body)
+}
+
 func TestGetsPayment(t *testing.T) {
 	paymentsRepository := paymentsRepositoryWithIds("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
 	app := CreateApp(paymentsRepository)
@@ -87,6 +100,16 @@ func (app *App) createPayment(filename string) *httptest.ResponseRecorder {
 	return app.makePostRequest(BASE_URL, payload)
 }
 
+func (app *App) updatePayment(id, filename string) *httptest.ResponseRecorder {
+	payload, err := readTestFile(filename)
+	if err != nil {
+		fmt.Println("Error loading data")
+		fmt.Println(err)
+	}
+
+	return app.makePutRequest(fmt.Sprintf("%s/%s", BASE_URL, id), payload)
+}
+
 func (app *App) getPayment(id string) *httptest.ResponseRecorder {
 	return app.makeGetRequest(fmt.Sprintf("%s/%s", BASE_URL, id))
 }
@@ -128,15 +151,19 @@ func readTestFile(filename string) ([]byte, error) {
 }
 
 func (app *App) makeGetRequest(path string) *httptest.ResponseRecorder {
-	req, _ := http.NewRequest("GET", path, nil)
-	response := httptest.NewRecorder()
-	app.Router.Router.ServeHTTP(response, req)
-
-	return response
+	return app.makeRequestWithBody("GET", path, nil)
 }
 
 func (app *App) makePostRequest(path string, payload []byte) *httptest.ResponseRecorder {
-	req, _ := http.NewRequest("POST", path, bytes.NewBuffer(payload))
+	return app.makeRequestWithBody("POST", path, payload)
+}
+
+func (app *App) makePutRequest(path string, payload []byte) *httptest.ResponseRecorder {
+	return app.makeRequestWithBody("PUT", path, payload)
+}
+
+func (app *App) makeRequestWithBody(method, path string, payload []byte) *httptest.ResponseRecorder {
+	req, _ := http.NewRequest(method, path, bytes.NewBuffer(payload))
 	response := httptest.NewRecorder()
 	app.Router.Router.ServeHTTP(response, req)
 
