@@ -42,11 +42,12 @@ func TestUpdatesPayment(t *testing.T) {
 }
 
 func TestGetsPayment(t *testing.T) {
-	paymentsRepository := paymentsRepositoryWithIds("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
+	id := "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"
+	paymentsRepository := paymentsRepositoryWithIds(id)
 	app := CreateApp(paymentsRepository)
 	app.createPayment("create-payment-1_request.json")
 
-	response := app.getPayment("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
+	response := app.getPayment(id)
 
 	assertResponseCode(t, http.StatusOK, response.Code)
 	assertResponseBody(t, "payment-1_response.json", response.Body)
