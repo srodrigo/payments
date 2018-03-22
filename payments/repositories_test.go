@@ -3,6 +3,7 @@ package payments
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"reflect"
 	"regexp"
 	"testing"
 )
@@ -36,4 +37,21 @@ func TestFindsPaymentsById(t *testing.T) {
 
 	assert.Equal(t, payment, paymentById)
 	assert.Equal(t, nil, err)
+}
+
+func TestUpdatesPayment(t *testing.T) {
+	paymentsRepository := NewPaymentsRepository()
+	payment := paymentsRepository.Save(&Payment{})
+
+	newPayment := Payment(*payment)
+	newPayment.Amount = "3"
+	newPaymentRef := &newPayment
+	updatedPayment, err := paymentsRepository.Update(payment.Id, newPaymentRef)
+
+	assert.Equal(t, 1, len(paymentsRepository.FindAll()))
+	assert.True(t, reflect.DeepEqual(*newPaymentRef, *updatedPayment))
+	assert.Equal(t, nil, err)
+
+	paymentById, err := paymentsRepository.FindById(payment.Id)
+	assert.True(t, reflect.DeepEqual(*newPaymentRef, *paymentById))
 }
