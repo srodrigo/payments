@@ -14,16 +14,6 @@ import (
 
 const BASE_URL = "/v1/payments"
 
-type TestUUID struct {
-	Ids []string
-}
-
-func (uuid *TestUUID) GetNextUUID() string {
-	nextUuid := uuid.Ids[0]
-	uuid.Ids = uuid.Ids[1:]
-	return nextUuid
-}
-
 func TestCreateApp(t *testing.T) {
 	paymentsRepository := payments.PaymentsRepository{}
 	app := CreateApp(&paymentsRepository)
@@ -32,12 +22,8 @@ func TestCreateApp(t *testing.T) {
 }
 
 func TestCreatesPayment(t *testing.T) {
-	paymentsRepository := payments.PaymentsRepository{
-		Uuid: &TestUUID{
-			Ids: []string{"4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"},
-		},
-	}
-	app := CreateApp(&paymentsRepository)
+	paymentsRepository := paymentsRepositoryWithIds("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
+	app := CreateApp(paymentsRepository)
 
 	response := app.createPayment("create-payment-1_request.json")
 
@@ -46,12 +32,8 @@ func TestCreatesPayment(t *testing.T) {
 }
 
 func TestGetsPayment(t *testing.T) {
-	paymentsRepository := payments.PaymentsRepository{
-		Uuid: &TestUUID{
-			Ids: []string{"4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"},
-		},
-	}
-	app := CreateApp(&paymentsRepository)
+	paymentsRepository := paymentsRepositoryWithIds("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
+	app := CreateApp(paymentsRepository)
 	app.createPayment("create-payment-1_request.json")
 
 	response := app.getPayment("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
@@ -61,15 +43,11 @@ func TestGetsPayment(t *testing.T) {
 }
 
 func TestGetAllPayments(t *testing.T) {
-	paymentsRepository := payments.PaymentsRepository{
-		Uuid: &TestUUID{
-			Ids: []string{
-				"4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43",
-				"216d4da9-e59a-4cc6-8df3-3da6e7580b77",
-			},
-		},
-	}
-	app := CreateApp(&paymentsRepository)
+	paymentsRepository := paymentsRepositoryWithIds(
+		"4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43",
+		"216d4da9-e59a-4cc6-8df3-3da6e7580b77",
+	)
+	app := CreateApp(paymentsRepository)
 	app.createPayment("create-payment-1_request.json")
 	app.createPayment("create-payment-2_request.json")
 
@@ -139,4 +117,20 @@ func (app *App) makePostRequest(path string, payload []byte) *httptest.ResponseR
 	app.Router.Router.ServeHTTP(response, req)
 
 	return response
+}
+
+type TestUUID struct {
+	Ids []string
+}
+
+func (uuid *TestUUID) GetNextUUID() string {
+	nextUuid := uuid.Ids[0]
+	uuid.Ids = uuid.Ids[1:]
+	return nextUuid
+}
+
+func paymentsRepositoryWithIds(ids ...string) *payments.PaymentsRepository {
+	return &payments.PaymentsRepository{
+		Uuid: &TestUUID{Ids: ids},
+	}
 }
