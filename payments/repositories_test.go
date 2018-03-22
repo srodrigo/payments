@@ -54,3 +54,18 @@ func TestUpdatesPayment(t *testing.T) {
 	assert.True(t, reflect.DeepEqual(*newPaymentRef, *allPayments[0]))
 	assert.Equal(t, nil, err)
 }
+
+func TestDeletesPayment(t *testing.T) {
+	paymentsRepository := NewPaymentsRepository()
+	first := paymentsRepository.Save(&Payment{})
+	second := paymentsRepository.Save(&Payment{})
+	third := paymentsRepository.Save(&Payment{})
+
+	err := paymentsRepository.Delete(second.Id)
+
+	allPayments := paymentsRepository.FindAll()
+	assert.Equal(t, 2, len(allPayments))
+	assert.True(t, reflect.DeepEqual(*first, *allPayments[0]))
+	assert.True(t, reflect.DeepEqual(*third, *allPayments[1]))
+	assert.Equal(t, nil, err)
+}
