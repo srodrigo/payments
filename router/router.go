@@ -83,12 +83,15 @@ func GetPaymentHandler(paymentsService *payments.PaymentsService) func(w http.Re
 
 func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO: Handle error
-		b, _ := ioutil.ReadAll(r.Body)
+		b, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
 
 		var payment payments.Payment
-		err := json.Unmarshal(b, &payment)
+		err = json.Unmarshal(b, &payment)
 		if err != nil {
 			log.Println("Error parsing body:", err)
 			w.WriteHeader(http.StatusBadRequest)
@@ -106,12 +109,15 @@ func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 
 func UpdatePaymentHandler(paymentsService *payments.PaymentsService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO: Handle error
-		b, _ := ioutil.ReadAll(r.Body)
+		b, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
 
 		var payment payments.Payment
-		err := json.Unmarshal(b, &payment)
+		err = json.Unmarshal(b, &payment)
 		if err != nil {
 			log.Println("Error parsing body:", err)
 			w.WriteHeader(http.StatusBadRequest)
