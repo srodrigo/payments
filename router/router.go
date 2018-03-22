@@ -2,6 +2,7 @@ package router
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/srodrigo/payments/payments"
 	"io/ioutil"
@@ -31,11 +32,12 @@ type LinksPayload struct {
 
 func NewRouter(paymentsRepository *payments.PaymentsRepository) *Router {
 	paymentsService := payments.NewPaymentsService(paymentsRepository)
+	const BASE_URL = "/v1/payments"
 
 	muxRouter := mux.NewRouter()
-	muxRouter.HandleFunc("/payments", GetAllPaymentsHandler(paymentsService)).Methods("GET")
-	muxRouter.HandleFunc("/payments/{id}", GetPaymentHandler(paymentsService)).Methods("GET")
-	muxRouter.HandleFunc("/payments", CreatePaymentHandler(paymentsService)).Methods("POST")
+	muxRouter.HandleFunc(BASE_URL, GetAllPaymentsHandler(paymentsService)).Methods("GET")
+	muxRouter.HandleFunc(BASE_URL+"/{id}", GetPaymentHandler(paymentsService)).Methods("GET")
+	muxRouter.HandleFunc(BASE_URL, CreatePaymentHandler(paymentsService)).Methods("POST")
 
 	return &Router{
 		Router: muxRouter,
@@ -47,7 +49,8 @@ func GetAllPaymentsHandler(paymentsService *payments.PaymentsService) func(w htt
 		newPayment := paymentsService.GetAllPayments()
 
 		// TODO: Handle error
-		payload, _ := createAllPaymentsPayload(newPayment)
+		url := fmt.Sprintf("http://%s%s", r.Host, r.URL.Path)
+		payload, _ := createAllPaymentsPayload(newPayment, url)
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
@@ -109,7 +112,7 @@ func createPaymentPayload(payment *payments.Payment) *PaymentPayload {
 	}
 }
 
-func createAllPaymentsPayload(payments []*payments.Payment) ([]byte, error) {
+func createAllPaymentsPayload(payments []*payments.Payment, url string) ([]byte, error) {
 	paymentsPayload := make([]*PaymentPayload, len(payments))
 	for i := 0; i < len(payments); i++ {
 		payload := createPaymentPayload(payments[i])
@@ -118,6 +121,6 @@ func createAllPaymentsPayload(payments []*payments.Payment) ([]byte, error) {
 
 	return json.Marshal(PaymentsListPayload{
 		Data:  paymentsPayload,
-		Links: LinksPayload{Self: "TODO: get url"},
+		Links: LinksPayload{Self: url},
 	})
 }

@@ -132,6 +132,6 @@
         }
     ],
     "links": {
-        "self": "https://api.test.tech/v1/payments"
+        "self": "http:///v1/payments"
     }
 }

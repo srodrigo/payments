@@ -12,6 +12,8 @@ import (
 	"testing"
 )
 
+const BASE_URL = "/v1/payments"
+
 func TestCreateApp(t *testing.T) {
 	paymentsRepository := payments.PaymentsRepository{}
 	app := CreateApp(&paymentsRepository)
@@ -59,15 +61,15 @@ func (app *App) createPayment(filename string) *httptest.ResponseRecorder {
 		fmt.Println(err)
 	}
 
-	return app.makePostRequest("/payments", payload)
+	return app.makePostRequest(BASE_URL, payload)
 }
 
 func (app *App) getPayment(id string) *httptest.ResponseRecorder {
-	return app.makeGetRequest(fmt.Sprintf("/payments/%s", id))
+	return app.makeGetRequest(fmt.Sprintf("%s/%s", BASE_URL, id))
 }
 
 func (app *App) getAllPayments() *httptest.ResponseRecorder {
-	return app.makeGetRequest("/payments")
+	return app.makeGetRequest(BASE_URL)
 }
 
 func assertResponseCode(t *testing.T, expected, actual int) {
