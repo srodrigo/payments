@@ -148,11 +148,11 @@ func (app *App) updatePayment(id, filename string) *httptest.ResponseRecorder {
 		fmt.Println(err)
 	}
 
-	return app.makePutRequest(fmt.Sprintf("%s/%s", BASE_URL, id), payload)
+	return app.makePutRequest(makeIdUrl(id), payload)
 }
 
 func (app *App) getPayment(id string) *httptest.ResponseRecorder {
-	return app.makeGetRequest(fmt.Sprintf("%s/%s", BASE_URL, id))
+	return app.makeGetRequest(makeIdUrl(id))
 }
 
 func (app *App) getAllPayments() *httptest.ResponseRecorder {
@@ -160,7 +160,11 @@ func (app *App) getAllPayments() *httptest.ResponseRecorder {
 }
 
 func (app *App) deletePayment(id string) *httptest.ResponseRecorder {
-	return app.makeDeleteRequest(fmt.Sprintf("%s/%s", BASE_URL, id))
+	return app.makeDeleteRequest(makeIdUrl(id))
+}
+
+func makeIdUrl(id string) string {
+	return fmt.Sprintf("%s/%s", BASE_URL, id)
 }
 
 type TestUUID struct {
