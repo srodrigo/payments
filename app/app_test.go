@@ -70,6 +70,18 @@ func TestGetAllPayments(t *testing.T) {
 	assertResponseBody(t, "all-payments_response.json", response.Body)
 }
 
+func TestDeletesPayment(t *testing.T) {
+	id := "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43"
+	paymentsRepository := paymentsRepositoryWithIds(id)
+	app := CreateApp(paymentsRepository)
+	app.createPayment("create-payment-1_request.json")
+
+	response := app.deletePayment(id)
+
+	assertResponseCode(t, http.StatusNoContent, response.Code)
+	assertEmptyResponseBody(t, response.Body)
+}
+
 func TestBadRequestWhenCreatePaymentBodyIsInvalid(t *testing.T) {
 	paymentsRepository := paymentsRepositoryWithIds("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
 	app := CreateApp(paymentsRepository)
@@ -140,6 +152,10 @@ func (app *App) getAllPayments() *httptest.ResponseRecorder {
 	return app.makeGetRequest(BASE_URL)
 }
 
+func (app *App) deletePayment(id string) *httptest.ResponseRecorder {
+	return app.makeDeleteRequest(fmt.Sprintf("%s/%s", BASE_URL, id))
+}
+
 func assertResponseCode(t *testing.T, expected, actual int) {
 	assert.Equal(t, expected, actual)
 }
@@ -182,6 +198,10 @@ func (app *App) makePostRequest(path string, payload []byte) *httptest.ResponseR
 
 func (app *App) makePutRequest(path string, payload []byte) *httptest.ResponseRecorder {
 	return app.makeRequestWithBody("PUT", path, payload)
+}
+
+func (app *App) makeDeleteRequest(path string) *httptest.ResponseRecorder {
+	return app.makeRequestWithBody("DELETE", path, nil)
 }
 
 func (app *App) makeRequestWithBody(method, path string, payload []byte) *httptest.ResponseRecorder {
