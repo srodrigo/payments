@@ -12,6 +12,10 @@ func (service *PaymentsService) CreatePayment(payment *Payment) *Payment {
 	return service.PaymentsRepository.Save(payment)
 }
 
+func (service *PaymentsService) UpdatePayment(id string, payment *Payment) (*Payment, error) {
+	return service.PaymentsRepository.Update(id, payment)
+}
+
 func (service *PaymentsService) GetPaymentById(id string) (*Payment, error) {
 	return service.PaymentsRepository.FindById(id)
 }

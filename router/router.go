@@ -39,6 +39,7 @@ func NewRouter(paymentsRepository *payments.PaymentsRepository) *Router {
 	muxRouter.HandleFunc(BASE_URL, GetAllPaymentsHandler(paymentsService)).Methods("GET")
 	muxRouter.HandleFunc(BASE_URL+"/{id}", GetPaymentHandler(paymentsService)).Methods("GET")
 	muxRouter.HandleFunc(BASE_URL, CreatePaymentHandler(paymentsService)).Methods("POST")
+	muxRouter.HandleFunc(BASE_URL+"/{id}", UpdatePaymentHandler(paymentsService)).Methods("PUT")
 
 	return &Router{
 		Router: muxRouter,
@@ -49,8 +50,8 @@ func GetAllPaymentsHandler(paymentsService *payments.PaymentsService) func(w htt
 	return func(w http.ResponseWriter, r *http.Request) {
 		newPayment := paymentsService.GetAllPayments()
 
-		// TODO: Handle error
 		url := fmt.Sprintf("http://%s%s", r.Host, r.URL.Path)
+		// TODO: Handle error
 		payload, _ := createAllPaymentsPayload(newPayment, url)
 
 		writeJsonResponse(w, http.StatusOK, payload)
@@ -96,6 +97,31 @@ func CreatePaymentHandler(paymentsService *payments.PaymentsService) func(w http
 		payload, _ := marshalPayment(newPayment)
 
 		writeJsonResponse(w, http.StatusCreated, payload)
+	}
+}
+
+func UpdatePaymentHandler(paymentsService *payments.PaymentsService) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// TODO: Handle error
+		b, _ := ioutil.ReadAll(r.Body)
+		defer r.Body.Close()
+
+		var payment payments.Payment
+		err := json.Unmarshal(b, &payment)
+		if err != nil {
+			log.Println("Error parsing body")
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		vars := mux.Vars(r)
+		newPayment, _ := paymentsService.UpdatePayment(vars["id"], &payment)
+
+		// TODO: Handle error
+		payload, _ := marshalPayment(newPayment)
+
+		writeJsonResponse(w, http.StatusOK, payload)
 	}
 }
 

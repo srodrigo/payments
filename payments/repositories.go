@@ -37,6 +37,20 @@ func (repository *PaymentsRepository) Save(payment *Payment) *Payment {
 	return &newPayment
 }
 
+func (repository *PaymentsRepository) Update(id string, payment *Payment) (*Payment, error) {
+	for i, _ := range repository.payments {
+		current := repository.payments[i]
+		if current.Id == id {
+			updatedPayment := Payment(*payment)
+			updatedPayment.Id = current.Id
+			repository.payments[i] = &updatedPayment
+			return &updatedPayment, nil
+		}
+	}
+
+	return &Payment{}, nil
+}
+
 func (repository *PaymentsRepository) FindById(id string) (*Payment, error) {
 	for i, _ := range repository.payments {
 		payment := repository.payments[i]
